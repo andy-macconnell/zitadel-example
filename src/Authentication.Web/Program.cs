@@ -1,16 +1,9 @@
-using System.Security.Claims;
-
-using Authentication.Web.Extensions;
 using Authentication.Web.Options;
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect.Claims;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 using Zitadel.Authentication;
+using Zitadel.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,10 +12,22 @@ builder.Services.Configure<ZitadelOptions>(builder.Configuration.GetSection("Zit
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = ZitadelDefaults.AuthenticationScheme;
 })
 .AddCookie()
-.AddZitadel(builder.Configuration);
+.AddZitadel(options => 
+{
+    var zitadelSettings = builder.Configuration
+    .GetRequiredSection(ZitadelOptions.Section)
+    .Get<ZitadelOptions>();
+
+    options.ClientId = zitadelSettings!.ClientId;
+    options.ClientSecret = zitadelSettings.ClientSecret;
+    options.Authority = zitadelSettings.BaseUri;
+    options.RequireHttpsMetadata = false;
+});
+//.AddZitadel(builder.Configuration);
+
 // .AddOpenIdConnect(options => ConfigureOidc(options, builder.Configuration));
 
 builder.Services.AddControllersWithViews();

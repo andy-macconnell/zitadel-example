@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
 
+using Zitadel.Authentication;
+
 namespace Authentication.Web.Controllers;
 
 public class AccountController : Controller
@@ -54,7 +56,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+        await HttpContext.SignOutAsync(ZitadelDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Home");
     }
 }
