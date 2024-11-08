@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<h1>Welcome to the Zitadel Demo</h1>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <p>Hello @User.Identity.Name!</p>
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        <button type="submit" class="btn btn-primary">Logout</button>
+    </form>
+}
+else
+{
+    <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Login</a>
+}
